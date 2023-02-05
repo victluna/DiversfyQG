@@ -33,7 +33,6 @@ def diversity_changed_score(ground, output, similarity):
     diverse_similarty = diverse_score * np.exp(similarity - 1)
     return diverse_score, diverse_similarty
 
-
 def train_forward(args, iteration):
     device = 'cuda' if torch.cuda.is_available() else 'cpu'    
     logging.info("Create model.........")
@@ -46,8 +45,7 @@ def train_forward(args, iteration):
     if iteration == 0:
         train_pt = os.path.join(args.output_dir, 'forward_raw_train.pt')
         train_loader = DataLoader(train_pt, args.batch_size, training=True)
-    else:
-             
+    else:             
         model.load_state_dict(torch.load(os.path.join(args.output_dir, 'param_forward_WQ_' + str(iteration - 1) +'.pt')) )
         backward_model = model_class.from_pretrained(args.model_name_or_path)
         backward_model.load_state_dict(torch.load(os.path.join(args.output_dir, 'param_backward_WQ_' + str(iteration - 1) +'.pt')) )
@@ -59,9 +57,7 @@ def train_forward(args, iteration):
 
     model = torch.nn.DataParallel(model, device_ids = [0, 1])
     model = model.to(device)
-
-    optimizer = AdamW(model.parameters(), lr=args.learning_rate)
-   
+    optimizer = AdamW(model.parameters(), lr=args.learning_rate)   
     start = time.time()
     # Train!
     logging.info("***** Running training *****")
@@ -78,11 +74,9 @@ def train_forward(args, iteration):
         for step, batch in enumerate(train_loader):
             batch = tuple(t.to(device) for t in batch)
             pad_token_id = tokenizer.pad_token_id
-            source_ids, source_mask, y = batch[0], batch[1], batch[2]
-            
+            source_ids, source_mask, y = batch[0], batch[1], batch[2]            
             y_ids = y[:, :-1].contiguous()
-            lm_labels = y[:, 1:].clone()
-            
+            lm_labels = y[:, 1:].clone()            
             lm_labels[y[:, 1:] == pad_token_id] = -100      
             outputs = model(input_ids = source_ids.to(device), attention_mask = source_mask.to(device), decoder_input_ids = y_ids.to(device), labels = lm_labels.to(device))
             loss = outputs[0]           
@@ -97,15 +91,14 @@ def train_forward(args, iteration):
         epoch_loss = tr_loss/global_step ### after each epoch, the loss value #####
         earlyStop(epoch_loss, model, args, name, iteration)   
         if 'cuda' in str(device):
-            torch.cuda.empty_cache()#释放显存
-        
+            torch.cuda.empty_cache()        
         out, semantic_score, diversity_score, _ = test_forward(model, tokenizer, args, iteration)  
         sim_div = diversity_score*np.exp(semantic_score - 1)                  
         if semanticMaxScore < sim_div: 
             semanticMaxScore = sim_div
             torch.save(model.module.state_dict(), os.path.join(args.output_dir, 'param_forward_WQ_' + str(iteration) +'.pt'), _use_new_zipfile_serialization = False)
             np.savetxt(os.path.join(args.output_dir, 'forward_WQ_Val_' + str(iteration) +'.txt'), out, fmt='%s')
-        if(earlyStop.early_stop): ####早期停止#####
+        if(earlyStop.early_stop): ####early stop#####
             break
     end = time.time()
     t = (end-start)/3600
@@ -132,8 +125,7 @@ def train_backward(args, iteration):
         outs = generate_forward(backward_model, tokenizer, device, iteration, args)        
         backward_process(args, tokenizer, outs, iteration)
         train_pt = os.path.join(args.output_dir, 'backward_train_' + str(iteration) + '.pt')
-        train_loader = DataLoader(train_pt, args.batch_size, training=True)    
-  
+        train_loader = DataLoader(train_pt, args.batch_size, training=True)  
 
     model = torch.nn.DataParallel(model, device_ids = [0, 1])
     model = model.to(device)
@@ -153,14 +145,11 @@ def train_backward(args, iteration):
         global_step = 0
         tr_loss = 0.0
         for step, batch in enumerate(train_loader):
-            #batch是一个tuple，一共包含5个类型的元素，分别是source_ids,source_mask,target_ids
             batch = tuple(t.to(device) for t in batch)
             pad_token_id = tokenizer.pad_token_id
-            source_ids, source_mask, y = batch[0], batch[1], batch[2]
-            
+            source_ids, source_mask, y = batch[0], batch[1], batch[2]            
             y_ids = y[:, :-1].contiguous()
-            lm_labels = y[:, 1:].clone()
-            
+            lm_labels = y[:, 1:].clone()            
             lm_labels[y[:, 1:] == pad_token_id] = -100      
             outputs = model(input_ids = source_ids.to(device), attention_mask = source_mask.to(device), decoder_input_ids = y_ids.to(device), labels = lm_labels.to(device))
             loss = outputs[0]           
@@ -175,19 +164,18 @@ def train_backward(args, iteration):
         epoch_loss = tr_loss/global_step ### after each epoch, the loss value
         earlyStop(epoch_loss, model, args, name, iteration)   
         if 'cuda' in str(device):
-            torch.cuda.empty_cache()#释放显存
+            torch.cuda.empty_cache()
         
         semantic_score, outs = test_backward(model, tokenizer, args, iteration)                    
-        if semanticMaxScore < semantic_score : ####初始化指标
+        if semanticMaxScore < semantic_score : 
             semanticMaxScore = semantic_score
             torch.save(model.module.state_dict(), os.path.join(args.output_dir, 'param_backward_WQ_' + str(iteration) +'.pt'), _use_new_zipfile_serialization = False)
             np.savetxt(os.path.join(args.output_dir, 'backward_WQ_Val_' + str(iteration) +'.txt'), outs, fmt='%s')
-        if(earlyStop.early_stop): ####早期停止#####
+        if(earlyStop.early_stop): ####early stop#####
             break
     end = time.time()
     t = (end-start)/3600
     print("run time: {} h".format(t))
-
 
 ######test_forward()函数用于初始化训练forward函数######
 def test_forward(model, tokenizer, args, iteration):
@@ -463,7 +451,7 @@ def main():
     # args display
     for k, v in vars(args).items():
         logging.info(k+':'+str(v))
-    #设置随机种子
+    # set random seed
     seed_everything(666)
     for iteration in range(args.N):
         train_forward(args, iteration)
