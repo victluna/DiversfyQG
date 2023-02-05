@@ -30,11 +30,11 @@ How to run
 ```
 $ python preprocess.py -input_dir dataset/WQ --output_dir './output_WQ' --model_name_or_path 'facebook/bart-base'
 ```
-2.Train:
+2.To train the example, execute:
 ```
 $ python train_main.py --epoch 30 --input_dir dataset/WQ --output_dir './output_WQ' --learning_rate 5e-5 --batch_size 8 --model_name_or_path 'facebook/bart-base'
 ```
-3.Infer:
+3.To infer the example, execute:
 ```
 $ python infer.py --input_dir dataset/WQ --output_dir './output_WQ' --batch_size 8 --model_name_or_path 'facebook/bart-base'
 ```
