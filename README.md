@@ -11,8 +11,11 @@ $ conda env create --name=DiversifyQG --file=environment.yml
 $ conda activate DiversifyQG
 ```
 2. Dataset
+
 (1) WQ : `dataset/` contains the files for WQ dataset. 
-(2) PQ : `dataset/` contains the files for PQ dataset. 
+
+(2) PQ : `dataset/` contains the files for PQ dataset.
+
 Specifically, 
 * `train_question_gold.txt, val_question_gold.txt and test_question_gold.txt` are the gold questions for train, dev and test, respectively. 
 * `pseundo.txt` is the pseudo questions from natural questions.
