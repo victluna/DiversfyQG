@@ -105,9 +105,9 @@ def encode_dataset(dataset, tokenizer, test):
         if len(answer)==0:
             answer = ['']
         answers = answers + answer
-    s = [i +' </s> ' + j for i, j in zip(subkgs, answers)] # BART开始的标记是<s>,分割和结尾的token是</s>
+    s = [i +' </s> ' + j for i, j in zip(subkgs, answers)] 
     
-    input_ids = tokenizer.batch_encode_plus(s, max_length = max_seq_length, padding = "max_length", truncation = True)#与上面的tokenizer()是一样的
+    input_ids = tokenizer.batch_encode_plus(s, max_length = max_seq_length, padding = "max_length", truncation = True)
     source_ids = np.array(input_ids['input_ids'], dtype = np.int32)
     source_mask = np.array(input_ids['attention_mask'], dtype = np.int32)
 
@@ -131,7 +131,7 @@ def encode_back_dataset(dataset, tokenizer, test):
         subkg = getNovelSubgraph(subkg)
         subkgs.append(subkg)
        
-    input_ids = tokenizer.batch_encode_plus(questions, max_length = max_seq_length, padding = "max_length", truncation = True)#与上面的tokenizer()是一样的
+    input_ids = tokenizer.batch_encode_plus(questions, max_length = max_seq_length, padding = "max_length", truncation = True)
     source_ids = np.array(input_ids['input_ids'], dtype = np.int32)
     source_mask = np.array(input_ids['attention_mask'], dtype = np.int32)
 
@@ -163,7 +163,7 @@ def encode_pseudo_train(outs, y, tokenizer):
 
 def encode_filter_one_dataset(subkgs, tokenizer):
     max_seq_length = 512
-    input_ids = tokenizer.batch_encode_plus(subkgs, max_length = max_seq_length, padding = "max_length", truncation = True)#与上面的tokenizer()是一样的
+    input_ids = tokenizer.batch_encode_plus(subkgs, max_length = max_seq_length, padding = "max_length", truncation = True)
     source_ids = np.array(input_ids['input_ids'], dtype = np.int32)
     source_mask = np.array(input_ids['attention_mask'], dtype = np.int32)
     target_ids = np.array([], dtype = np.int32)
