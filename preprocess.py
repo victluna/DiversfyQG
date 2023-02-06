@@ -404,8 +404,6 @@ def forward_initialize_main():
     parser.add_argument('--output_dir', required=True)
     parser.add_argument('--model_name_or_path', required=True)
     args = parser.parse_args()
-    print('Loading!!!!')
-    #test_set,train_set的类型为list
     test_set = []
     train_set = []
     val_set = []
