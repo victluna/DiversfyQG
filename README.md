@@ -1,5 +1,3 @@
-# DiversfyQG
-
 Requirements
 ====
 1.Environments
