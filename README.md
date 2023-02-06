@@ -15,7 +15,7 @@ $ conda activate DiversifyQG
 
 (2) PQ : `dataset/` contains the files for PQ dataset.
 
-Specifically, the files is organized as follows:
+Specifically, `WQ/` and `PQ/` contain the following files:
 * `train.json`, `dev.json` and `test.json` are the data for for train, dev and test, respectively.
 
 * `train_question_gold.txt`, `val_question_gold.txt` and `test_question_gold.txt` are the gold questions for train data, dev data and test data, respectively. 
@@ -24,7 +24,7 @@ Specifically, the files is organized as follows:
 
 How to run 
 ====
-1.Prepare dataset.
+1.Prepare data.
 ```
 $ python preprocess.py -input_dir dataset/WQ --output_dir './output_WQ' --model_name_or_path 'facebook/bart-base'
 ```
